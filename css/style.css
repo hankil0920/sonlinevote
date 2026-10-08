@@ -1,0 +1,275 @@
+/* =====================================================================
+   학생용 화면 스타일 (index.html)
+   - 모바일 우선: 기본은 휴대폰 화면 기준, 넓은 화면은 아래 @media 에서 늘림
+   - 흰 배경 + 포인트 컬러 1개(하트 색)만 사용해 작품에 시선이 가도록 함
+   ===================================================================== */
+
+/* ---------- 1. 색·크기 변수: 여기만 바꾸면 전체 분위기가 바뀝니다 ---------- */
+:root {
+  --heart: #ff3d5a;          /* 포인트 컬러 (하트, 주요 버튼) */
+  --heart-soft: #fff0f2;     /* 포인트 컬러의 연한 배경 */
+  --text: #1d1d1f;           /* 기본 글자 */
+  --muted: #6e6e73;          /* 보조 글자 */
+  --line: #e8e8ed;           /* 테두리 */
+  --bg: #ffffff;             /* 배경 */
+  --bg-soft: #f5f5f7;        /* 살짝 회색 배경 (스켈레톤, 입력창) */
+  --radius: 16px;
+  --shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+  --font: -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Pretendard", "Noto Sans KR",
+          "Malgun Gothic", sans-serif;
+}
+
+/* ---------- 2. 기본 ---------- */
+* { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font);
+  font-size: 16px;
+  line-height: 1.5;
+  word-break: keep-all;          /* 한국어 단어 중간에서 줄바꿈하지 않기 */
+  overflow-wrap: anywhere;
+}
+img { max-width: 100%; display: block; }
+button { font: inherit; color: inherit; }
+[hidden] { display: none !important; }
+
+.container { max-width: 1120px; margin: 0 auto; padding: 0 16px 48px; }
+.muted { color: var(--muted); font-size: 14px; margin: 0 0 16px; }
+
+/* ---------- 3. 버튼 ---------- */
+.btn {
+  border: 1px solid var(--line);
+  background: var(--bg);
+  border-radius: 999px;
+  padding: 10px 18px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 0.1s, background 0.15s;
+}
+.btn:active { transform: scale(0.97); }
+.btn:disabled { opacity: 0.5; cursor: default; }
+.btn-primary { background: var(--heart); border-color: var(--heart); color: #fff; }
+.btn-sm { padding: 6px 14px; font-size: 14px; }
+.btn-block { width: 100%; padding: 14px; font-size: 16px; }
+.btn-text { border: 0; background: none; color: var(--muted); padding: 4px 6px; cursor: pointer; font-size: 13px; }
+.btn-text:hover { color: var(--text); text-decoration: underline; }
+
+/* ---------- 4. 상단 바 ---------- */
+.topbar {
+  position: sticky; top: 0; z-index: 10;
+  background: rgba(255, 255, 255, 0.92);
+  backdrop-filter: saturate(180%) blur(12px);
+  -webkit-backdrop-filter: saturate(180%) blur(12px);
+  border-bottom: 1px solid var(--line);
+}
+.topbar-inner {
+  max-width: 1120px; margin: 0 auto; padding: 10px 16px;
+  display: flex; align-items: center; justify-content: space-between; gap: 12px;
+}
+.site-title { font-size: 18px; margin: 0; font-weight: 800; letter-spacing: -0.02em; }
+.me { display: flex; align-items: center; gap: 8px; font-size: 14px; flex-shrink: 0; }
+.me-name { font-weight: 600; }
+
+/* ---------- 5. 안내문 + 상태 ---------- */
+.intro { padding: 20px 0 8px; }
+.notice { margin: 8px 0 0; color: var(--muted); white-space: pre-wrap; }
+.status-pill {
+  display: inline-flex; align-items: center; gap: 6px;
+  font-size: 13px; font-weight: 700; padding: 4px 12px; border-radius: 999px;
+  background: var(--bg-soft); color: var(--muted);
+}
+.status-pill.open { background: var(--heart-soft); color: var(--heart); }
+.status-pill.open::before {
+  content: ""; width: 8px; height: 8px; border-radius: 50%; background: var(--heart);
+  animation: blink 1.6s infinite;
+}
+@keyframes blink { 50% { opacity: 0.3; } }
+
+/* ---------- 6. 정렬 탭 ---------- */
+.sort-tabs {
+  display: flex; gap: 8px; padding: 12px 0 16px;
+  position: sticky; top: 53px; z-index: 5; background: var(--bg);
+}
+.sort-tab {
+  border: 1px solid var(--line); background: var(--bg);
+  border-radius: 999px; padding: 7px 16px; font-size: 14px; font-weight: 600; cursor: pointer;
+}
+.sort-tab[aria-selected="true"] { background: var(--text); border-color: var(--text); color: #fff; }
+
+/* ---------- 7. 카드 그리드 ---------- */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));   /* 휴대폰: 2열 */
+  gap: 12px;
+}
+@media (min-width: 640px) { .grid { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; } }
+@media (min-width: 960px) { .grid { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 20px; } }
+
+.card {
+  border-radius: var(--radius); overflow: hidden; background: var(--bg);
+  border: 1px solid var(--line); display: flex; flex-direction: column;
+  transition: box-shadow 0.2s, transform 0.2s;
+}
+.card:hover { box-shadow: var(--shadow); transform: translateY(-2px); }
+.card-open {           /* 이미지+제목 부분 전체가 '크게 보기' 버튼 */
+  border: 0; background: none; padding: 0; text-align: left; cursor: pointer; display: block; width: 100%;
+}
+.card-thumb { aspect-ratio: 1 / 1; background: var(--bg-soft); overflow: hidden; }
+.card-thumb img { width: 100%; height: 100%; object-fit: cover; }
+.card-text { padding: 10px 12px 4px; }
+.card-title { font-weight: 700; font-size: 15px; margin: 0; line-height: 1.35;
+  display: -webkit-box; -webkit-line-clamp: 1; -webkit-box-orient: vertical; overflow: hidden; }
+.card-author { color: var(--muted); font-size: 13px; margin: 2px 0 0; }
+.card-actions { display: flex; align-items: center; gap: 4px; padding: 4px 6px 8px; }
+.card-comments { font-size: 13px; color: var(--muted); display: inline-flex; align-items: center; gap: 4px; padding: 0 6px; }
+
+/* ---------- 8. 하트 버튼 (카드: 보통 크기 / 상세: 큰 크기) ---------- */
+.like-btn {
+  display: inline-flex; align-items: center; gap: 6px;
+  border: 0; background: none; cursor: pointer; padding: 6px 8px; border-radius: 999px;
+  font-weight: 700; font-size: 14px; color: var(--muted);
+  -webkit-tap-highlight-color: transparent;
+}
+.like-btn svg { width: 22px; height: 22px; fill: none; stroke: currentColor; stroke-width: 2; }
+.like-btn.liked { color: var(--heart); }
+.like-btn.liked svg { fill: var(--heart); stroke: var(--heart); }
+.like-btn:disabled { cursor: default; }
+.like-count-static { display: inline-flex; align-items: center; gap: 6px; padding: 6px 8px; font-weight: 700; font-size: 14px; color: var(--muted); }
+.like-count-static svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 2; }
+
+.like-btn.big {
+  font-size: 18px; padding: 12px 22px; border: 2px solid var(--heart); color: var(--heart);
+  background: var(--bg);
+}
+.like-btn.big svg { width: 30px; height: 30px; }
+.like-btn.big.liked { background: var(--heart); color: #fff; }
+.like-btn.big.liked svg { fill: #fff; stroke: #fff; }
+
+/* 누를 때 짧은 '톡' 애니메이션 */
+.like-btn.pop svg { animation: pop 0.35s ease-out; }
+@keyframes pop {
+  0% { transform: scale(1); }
+  40% { transform: scale(1.35); }
+  100% { transform: scale(1); }
+}
+
+/* ---------- 9. 스켈레톤(불러오는 중), 빈 목록·오류 ---------- */
+.skeleton .card-thumb,
+.skeleton .sk-line {
+  background: linear-gradient(90deg, var(--bg-soft) 25%, #ececf0 50%, var(--bg-soft) 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.2s infinite;
+}
+.sk-line { height: 12px; border-radius: 6px; margin: 10px 12px; }
+.sk-line.short { width: 50%; }
+@keyframes shimmer { to { background-position: -200% 0; } }
+
+.state-box { text-align: center; padding: 56px 16px; color: var(--muted); }
+.state-box .state-emoji { font-size: 40px; display: block; margin-bottom: 8px; }
+.state-box .btn { margin-top: 16px; }
+
+/* ---------- 10. 모달 공통 ---------- */
+.modal {
+  border: 0; padding: 0; border-radius: 20px; background: var(--bg); color: var(--text);
+  width: min(100vw - 24px, 480px); max-height: calc(100dvh - 24px);
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.25);
+}
+.modal::backdrop { background: rgba(0, 0, 0, 0.55); }
+.modal[open] { animation: modal-in 0.2s ease-out; }
+@keyframes modal-in { from { opacity: 0; transform: translateY(12px); } }
+.modal-close {
+  position: absolute; top: 10px; right: 10px; z-index: 2;
+  width: 36px; height: 36px; border-radius: 50%; border: 0; cursor: pointer;
+  background: rgba(255, 255, 255, 0.9); box-shadow: 0 1px 4px rgba(0, 0, 0, 0.15); font-size: 16px;
+}
+body.modal-open { overflow: hidden; }
+
+/* ---------- 11. 상세 모달: 휴대폰은 위아래, 넓은 화면은 좌우 배치 ---------- */
+.modal.detail { width: min(100vw - 16px, 1040px); }
+@media (max-width: 639px) {
+  /* 휴대폰에서는 화면 전체를 쓰는 시트 형태 */
+  .modal.detail { width: 100vw; max-width: 100vw; height: 100dvh; max-height: 100dvh; border-radius: 0; margin: 0; }
+  /* 아래로 스크롤해도 닫기 버튼이 항상 보이도록 화면에 고정 */
+  .modal.detail .modal-close { position: fixed; }
+  /* 이미지 아래의 하트 버튼까지 첫 화면에 보이도록 이미지 높이를 조금 낮춤 */
+  .modal.detail .detail-image-wrap img { max-height: 55dvh; }
+}
+.detail-body { display: flex; flex-direction: column; }
+.detail-image-wrap { background: #111; display: flex; align-items: center; justify-content: center; }
+.detail-image-wrap img { width: 100%; max-height: 70dvh; object-fit: contain; }
+.detail-info { padding: 18px 18px 28px; }
+.detail-title { font-size: 22px; margin: 0; letter-spacing: -0.02em; }
+.detail-author { color: var(--muted); margin: 2px 0 14px; }
+.detail-like { margin: 0 0 16px; display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+.detail-desc { white-space: pre-wrap; margin: 0 0 20px; }
+.closed-note {
+  font-size: 14px; color: var(--muted); background: var(--bg-soft);
+  padding: 10px 14px; border-radius: 12px; margin: 0;
+}
+
+@media (min-width: 900px) {
+  .detail-body { flex-direction: row; height: min(86dvh, 760px); }
+  .detail-image-wrap { flex: 1 1 58%; min-width: 0; }
+  .detail-image-wrap img { max-height: 100%; height: 100%; }
+  .detail-info { flex: 0 0 42%; overflow-y: auto; }
+}
+
+/* ---------- 12. 댓글 ---------- */
+.comments { border-top: 1px solid var(--line); padding-top: 16px; }
+.comments-title { font-size: 16px; margin: 0 0 12px; }
+.comment-form textarea {
+  width: 100%; min-height: 72px; resize: vertical; border: 1px solid var(--line); border-radius: 12px;
+  padding: 10px 12px; font: inherit; background: var(--bg-soft);
+}
+.comment-form textarea:focus { outline: 2px solid var(--heart); outline-offset: -1px; background: #fff; }
+.comment-form-row { display: flex; justify-content: space-between; align-items: center; margin-top: 6px; }
+.char-count { font-size: 12px; color: var(--muted); }
+.char-count.over { color: var(--heart); font-weight: 700; }
+.comment-list { list-style: none; margin: 16px 0 0; padding: 0; }
+.comment { padding: 10px 0; border-bottom: 1px solid var(--line); }
+.comment-head { display: flex; align-items: center; gap: 8px; font-size: 13px; }
+.comment-author { font-weight: 700; }
+.comment-time { color: var(--muted); }
+.comment-mine { font-size: 11px; color: var(--heart); background: var(--heart-soft); padding: 1px 6px; border-radius: 6px; }
+.comment-head .btn-text { margin-left: auto; }
+.comment-body { margin: 4px 0 0; white-space: pre-wrap; }
+.comment-empty { color: var(--muted); font-size: 14px; padding: 12px 0; }
+
+/* ---------- 13. 로그인 모달 ---------- */
+.login-form { padding: 28px 22px 22px; }
+.login-form h2 { margin: 0 0 4px; font-size: 22px; }
+.field { display: block; margin-bottom: 12px; }
+.field span { display: block; font-size: 13px; font-weight: 700; margin-bottom: 4px; }
+.field input {
+  width: 100%; border: 1px solid var(--line); border-radius: 12px; padding: 12px 14px;
+  font: inherit; background: var(--bg-soft);
+}
+.field input:focus { outline: 2px solid var(--heart); outline-offset: -1px; background: #fff; }
+.privacy { font-size: 13px; color: var(--muted); background: var(--bg-soft); border-radius: 12px; padding: 10px 14px; margin: 4px 0 10px; }
+.privacy summary { cursor: pointer; font-weight: 600; }
+.privacy ul { margin: 8px 0 0; padding-left: 18px; }
+.agree { display: flex; gap: 8px; align-items: center; font-size: 14px; margin-bottom: 14px; cursor: pointer; }
+.agree input { width: 20px; height: 20px; accent-color: var(--heart); }
+.form-error { color: var(--heart); font-size: 14px; margin: 0 0 12px; font-weight: 600; }
+
+/* ---------- 14. 토스트 (잠깐 떴다 사라지는 알림) ---------- */
+.toast {
+  position: fixed; left: 50%; bottom: 24px; transform: translateX(-50%); z-index: 1000;
+  background: rgba(29, 29, 31, 0.92); color: #fff; padding: 10px 18px; border-radius: 999px;
+  font-size: 14px; max-width: calc(100vw - 32px); text-align: center;
+  animation: toast-in 0.2s ease-out;
+}
+@keyframes toast-in { from { opacity: 0; transform: translate(-50%, 8px); } }
+
+/* ---------- 15. 바닥글 ---------- */
+.footer { text-align: center; padding: 24px 16px 40px; }
+.footer-link { color: var(--muted); font-size: 12px; text-decoration: none; }
+.footer-link:hover { text-decoration: underline; }
+
+/* 움직임 줄이기 설정을 켠 사용자에게는 애니메이션을 끔 */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation: none !important; transition: none !important; }
+}

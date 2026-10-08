@@ -1,0 +1,122 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>캐릭터 공모전 투표</title>
+  <meta name="description" content="학생들이 그린 캐릭터 작품을 보고 하트와 댓글로 투표하는 사이트" />
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+  <!-- ===================== 상단 바: 사이트 제목 + 로그인 상태 ===================== -->
+  <header class="topbar">
+    <div class="topbar-inner">
+      <h1 class="site-title" id="siteTitle">캐릭터 공모전 투표</h1>
+      <div class="me" id="meArea">
+        <!-- 로그인 전: 로그인 버튼 / 로그인 후: 이름 + 로그아웃 (app.js 가 채움) -->
+        <button type="button" class="btn btn-primary btn-sm" id="loginOpenBtn">로그인</button>
+      </div>
+    </div>
+  </header>
+
+  <main class="container">
+    <!-- 안내문 + 투표 상태 -->
+    <section class="intro">
+      <span class="status-pill" id="votingPill" hidden></span>
+      <p class="notice" id="notice"></p>
+    </section>
+
+    <!-- 정렬 탭 -->
+    <nav class="sort-tabs" role="tablist" aria-label="작품 정렬">
+      <button type="button" role="tab" class="sort-tab" data-sort="random" aria-selected="true">랜덤</button>
+      <button type="button" role="tab" class="sort-tab" data-sort="popular" aria-selected="false">인기순</button>
+      <button type="button" role="tab" class="sort-tab" data-sort="latest" aria-selected="false">최신순</button>
+    </nav>
+
+    <!-- 작품 카드 그리드: 처음에는 스켈레톤(회색 상자)을 보여 주고, 불러오면 카드로 바꿈 -->
+    <section class="grid" id="grid" aria-live="polite"></section>
+
+    <!-- 빈 목록 / 오류 상태 -->
+    <div class="state-box" id="stateBox" hidden></div>
+  </main>
+
+  <footer class="footer">
+    <a href="admin.html" class="footer-link">관리자</a>
+  </footer>
+
+  <!-- ===================== 작품 상세 모달: 이미지 → 하트 → 댓글을 한 화면에 ===================== -->
+  <dialog class="modal detail" id="detailModal" aria-labelledby="detailTitle">
+    <button type="button" class="modal-close" data-close aria-label="닫기">✕</button>
+    <div class="detail-body">
+      <div class="detail-image-wrap">
+        <img id="detailImage" alt="" />
+      </div>
+      <div class="detail-info">
+        <h2 class="detail-title" id="detailTitle"></h2>
+        <p class="detail-author" id="detailAuthor"></p>
+
+        <!-- 하트 영역: 투표 중이면 큰 하트 버튼, 마감이면 안내 문구 -->
+        <div class="detail-like" id="detailLike"></div>
+
+        <p class="detail-desc" id="detailDesc"></p>
+
+        <section class="comments">
+          <h3 class="comments-title">댓글 <span id="commentCount">0</span></h3>
+          <!-- 댓글 입력: 로그인/투표 상태에 따라 입력창 또는 안내 문구 -->
+          <div id="commentFormArea"></div>
+          <ul class="comment-list" id="commentList"></ul>
+        </section>
+      </div>
+    </div>
+  </dialog>
+
+  <!-- ===================== 로그인 모달 ===================== -->
+  <dialog class="modal login" id="loginModal" aria-labelledby="loginTitle">
+    <button type="button" class="modal-close" data-close aria-label="닫기">✕</button>
+    <form class="login-form" id="loginForm" novalidate>
+      <h2 id="loginTitle">학생 로그인</h2>
+      <p class="muted">학교, 학번, 이름을 입력하면 투표에 참여할 수 있어요.</p>
+
+      <label class="field">
+        <span>학교</span>
+        <input type="text" name="school" maxlength="40" placeholder="예) 서울온라인학교" autocomplete="organization" required />
+      </label>
+      <label class="field">
+        <span>학번</span>
+        <input type="text" name="studentNo" maxlength="20" placeholder="예) 10101" inputmode="numeric" autocomplete="off" required />
+      </label>
+      <label class="field">
+        <span>이름</span>
+        <input type="text" name="name" maxlength="20" placeholder="예) 홍길동" autocomplete="name" required />
+      </label>
+
+      <!-- 개인정보 수집·이용 동의: 펼쳐서 자세히 읽을 수 있음 -->
+      <details class="privacy">
+        <summary>개인정보 수집·이용 안내 (펼쳐 보기)</summary>
+        <ul>
+          <li><b>수집 항목</b>: 학교명, 학번, 이름</li>
+          <li><b>이용 목적</b>: 공모전 투표 참여자 확인 및 중복 투표 방지</li>
+          <li><b>공개 범위</b>: 댓글에는 이름 일부만(예: 강*욱) 표시되며, 실제 이름·학번은 담당 선생님만 볼 수 있습니다.</li>
+          <li><b>보유 기간</b>: 공모전 결과 확정 후 지체 없이 파기</li>
+          <li>동의하지 않을 수 있으며, 이 경우 작품 보기만 가능하고 투표에는 참여할 수 없습니다.</li>
+        </ul>
+      </details>
+      <label class="agree">
+        <input type="checkbox" name="agree" required />
+        <span>개인정보 수집·이용에 동의합니다.</span>
+      </label>
+
+      <p class="form-error" id="loginError" role="alert" hidden></p>
+      <button type="submit" class="btn btn-primary btn-block" id="loginSubmit">로그인</button>
+    </form>
+  </dialog>
+
+  <!-- 짧은 알림 메시지 (토스트) -->
+  <div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
+
+  <!-- Supabase 라이브러리(버전 고정) → 설정 → 앱 코드 순서로 불러옵니다 -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
+  <script src="js/config.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
